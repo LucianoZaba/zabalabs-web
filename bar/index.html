@@ -4,12 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ZabaLABS · Sistema de gestión para bares</title>
-<meta name="description" content="Sistema web para bares: mesas, comandas, cierre de caja y tickets. Instalado en 24 horas, con backups diarios y soporte.">
+<meta name="description" content="Sistema web para bares: mesas, comandas, cierre de caja y tickets de 80 mm. Instalado en 24 horas, con backups diarios y soporte por WhatsApp.">
 <meta property="og:title" content="ZabaLABS · Sistema de gestión para bares">
 <meta property="og:description" content="Mesas, comandas, cierre de caja y tickets en un solo lugar. Instalado en 24 horas.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://zabalabs.tech">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23f0b429'/><text x='50' y='70' font-size='62' font-family='system-ui' font-weight='700' text-anchor='middle' fill='%2314130f'>Z</text></svg>">
+<meta name="theme-color" content="#c5c5c5">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23000'/><text x='50' y='72' font-size='66' font-family='Arial Black,system-ui' font-weight='900' text-anchor='middle' fill='%23a7ff9c'>Z</text></svg>">
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=panchang@700&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=switzer@400,500&display=swap" rel="stylesheet">
+<script>document.documentElement.className+=' js';</script>
 <style>
 /* ------------------------------------------------------------------
    CONFIGURACION RAPIDA - editar solo estas dos lineas
@@ -26,412 +32,590 @@
 /* ------------------------------------------------------------------ */
 
 :root{
-  --bg:#0f1115;
-  --bg2:#14171d;
-  --card:#191d24;
-  --line:#272c35;
-  --text:#e8eaef;
-  --muted:#9aa3b2;
-  --gold:#f0b429;
-  --gold2:#ffcf5c;
-  --green:#25d366;
-  --max:1080px;
-  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --bg:#ffffff;
+  --surface:#f5f5f5;
+  --ink:#000000;
+  --muted:#4d4d4d;
+  --accent:#a7ff9c;
+  --grey:#c5c5c5;
+  --mint:#a7ff9c;
+  --orange:#ff6831;
+
+  --display:"Panchang","Archivo Black","Arial Black",Impact,sans-serif;
+  --text:"Switzer",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+
+  /* cinco pasos de tipo */
+  --s-hero:clamp(2rem,7.2vw,7.5rem);
+  --s-head:clamp(2rem,4.6vw,4.5rem);
+  --s-lead:clamp(1.25rem,1.1rem + .7vw,1.5rem);
+  --s-body:clamp(1.0625rem,1rem + .25vw,1.1875rem);
+  --s-small:.875rem;
+
+  --m:clamp(20px,2vw,28px);
+  --gap:8px;
+  --ease:cubic-bezier(.16,1,.3,1);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:var(--font);
-  line-height:1.6;
-  -webkit-font-smoothing:antialiased;
-}
-.wrap{max-width:var(--max);margin:0 auto;padding:0 22px}
+body{background:var(--bg);color:var(--ink);font-family:var(--text);font-size:var(--s-body);line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
-h1,h2,h3{line-height:1.15;letter-spacing:-.02em;font-weight:700}
-.gold{color:var(--gold)}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.on-dark :focus-visible,.bar-sec :focus-visible{outline-color:var(--mint)}
+::selection{background:var(--mint);color:#000}
+h1,h2,h3{font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:-.02em;line-height:1}
+h2{font-size:var(--s-head);line-height:.95}
 
-/* nav */
-header{
-  position:sticky;top:0;z-index:50;
-  background:rgba(15,17,21,.85);
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--line);
-}
-nav{display:flex;align-items:center;justify-content:space-between;height:64px}
-.logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.03em;font-size:1.1rem}
-.logo-mark{
-  width:30px;height:30px;border-radius:9px;background:linear-gradient(140deg,var(--gold),#c98f00);
-  display:grid;place-items:center;color:#14130f;font-weight:900;font-size:1rem;
-}
-nav .links{display:flex;gap:26px;font-size:.92rem;color:var(--muted)}
-nav .links a:hover{color:var(--text)}
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:9px;
-  padding:13px 22px;border-radius:10px;font-weight:600;font-size:.95rem;
-  border:1px solid transparent;cursor:pointer;transition:.15s;
-  white-space:nowrap;
-}
-.btn-gold{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#14130f}
-.btn-gold:hover{filter:brightness(1.07)}
-.btn-wa{background:var(--green);color:#0b2b16}
-.btn-wa:hover{filter:brightness(1.07)}
-.btn-ghost{border-color:var(--line);color:var(--text)}
-.btn-ghost:hover{border-color:#3d4552;background:#1a1e26}
-nav .btn{padding:9px 16px;font-size:.88rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:56px;padding:0 30px;border:0;border-radius:0;background:var(--ink);color:#fff;font-weight:500;font-size:var(--s-body);cursor:pointer;transition:transform .2s var(--ease),background .2s,color .2s}
+.btn:hover{transform:translateY(-3px)}
+.btn:active{transform:translateY(1px)}
+.btn-mint{background:var(--mint);color:#000}
+.btn-ink{background:#000;color:var(--mint)}
+.btn-white{background:#fff;color:#000}
 
-/* hero */
-.hero{padding:84px 0 70px;position:relative;overflow:hidden}
-.hero::before{
-  content:"";position:absolute;top:-260px;left:50%;transform:translateX(-50%);
-  width:900px;height:600px;pointer-events:none;
-  background:radial-gradient(circle,rgba(240,180,41,.13),transparent 62%);
-}
-.hero .wrap{position:relative}
-.eyebrow{
-  display:inline-block;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--gold);border:1px solid rgba(240,180,41,.3);
-  padding:6px 13px;border-radius:99px;margin-bottom:24px;
-}
-.hero h1{font-size:clamp(2.1rem,5.4vw,3.9rem);max-width:17ch;margin-bottom:22px}
-.hero p.lead{font-size:clamp(1rem,2vw,1.18rem);color:var(--muted);max-width:56ch;margin-bottom:34px}
-.cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:26px}
-.micro{font-size:.85rem;color:var(--muted)}
+/* ============ HERO ============ */
+.hero{background:var(--grey);min-height:100svh;display:grid;grid-template-columns:repeat(12,1fr);column-gap:var(--gap);padding:0 var(--m);position:relative;overflow:hidden}
+.hero-l{grid-column:1/5;display:flex;flex-direction:column;padding:var(--m) 0}
+.logo{font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:-.02em;font-size:1.1rem;display:flex;align-items:center;gap:10px}
+.logo i{width:30px;height:30px;background:#000;color:var(--mint);display:grid;place-items:center;font-style:normal;font-size:1rem}
+.hero-l .lead{margin-top:max(8svh,48px);font-size:var(--s-lead);line-height:1.3;max-width:24ch;font-weight:500;padding-top:calc(30svh - 8svh - 60px)}
+.hero-l .btn{margin-top:32px;align-self:flex-start}
+.hero-l .note{margin-top:16px;font-size:var(--s-small);color:var(--muted);max-width:30ch}
+.hero-r{grid-column:5/13;display:flex;flex-direction:column;padding-top:var(--m);min-height:100svh;min-width:0}
+.hero-nav{display:flex;gap:28px;font-size:var(--s-small);font-weight:500}
+.hero-nav a{padding:6px 0;transition:transform .2s var(--ease)}
+.hero-nav a:hover{transform:translateY(-2px);text-decoration:underline;text-underline-offset:5px}
+h1{font-size:var(--s-hero);line-height:.86;letter-spacing:-.04em;margin-top:clamp(28px,8svh,90px)}
+h1 .ln{display:block;overflow:hidden;padding:.04em 0 .02em}
+h1 .ln>span{display:block}
+.js h1 .ln>span{transform:translateY(112%);animation:rise .95s var(--ease) forwards}
+.js h1 .ln:nth-child(2)>span{animation-delay:.11s}
+@keyframes rise{to{transform:none}}
+.js .after-h{opacity:0;transform:translateY(18px);animation:fadeup .8s var(--ease) .75s forwards}
+@keyframes fadeup{to{opacity:1;transform:none}}
 
-/* strip */
-.strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg2)}
-.strip .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
-.strip .cell{padding:26px 18px;text-align:center;border-right:1px solid var(--line)}
-.strip .cell:last-child{border-right:none}
-.strip b{display:block;font-size:1.35rem;letter-spacing:-.02em}
-.strip span{font-size:.82rem;color:var(--muted)}
+.board-wrap{position:relative;margin-top:clamp(56px,9svh,100px);flex:1;min-height:340px}
+.board{position:absolute;inset:0;background:var(--orange);overflow:hidden;display:grid;grid-template-columns:1fr 1fr;gap:var(--m);padding:var(--m)}
+.fig{position:absolute;z-index:3;top:-52px;left:0;width:290px;background:var(--mint);color:#000;padding:16px 20px 18px}
+.fig b{display:block;white-space:nowrap;font-family:var(--display);font-size:2.25rem;line-height:1;letter-spacing:-.03em}
+.fig span{display:block;margin-top:8px;font-size:var(--s-small);line-height:1.3}
 
-/* sections */
-section{padding:80px 0}
-.sec-head{max-width:640px;margin-bottom:44px}
-.sec-head h2{font-size:clamp(1.6rem,3.4vw,2.3rem);margin-bottom:14px}
-.sec-head p{color:var(--muted)}
+/* carta del hero (viva) */
+.carta{align-self:end;display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);padding-top:56px;padding-bottom:var(--m);position:relative;z-index:2}
+.beer{background:#fff;color:#000;border:0;border-radius:0;padding:14px 14px 12px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:2px;min-height:78px;transition:transform .18s var(--ease),background .18s}
+.beer b{font-weight:500;font-size:var(--s-body);line-height:1.15}
+.beer span{font-size:var(--s-small);color:var(--muted)}
+.beer:hover{transform:translateY(-3px);background:var(--mint)}
+.beer:active{transform:scale(.97)}
+.beer.pop{animation:pop .35s var(--ease)}
+@keyframes pop{40%{transform:scale(.94)}}
 
-/* features */
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.card{
-  background:var(--card);border:1px solid var(--line);border-radius:14px;
-  padding:26px 24px;transition:.18s;
-}
-.card:hover{border-color:#3a4250;transform:translateY(-2px)}
-.card .ico{
-  width:38px;height:38px;border-radius:10px;display:grid;place-items:center;
-  background:rgba(240,180,41,.1);color:var(--gold);margin-bottom:16px;
-}
-.card h3{font-size:1.02rem;margin-bottom:8px}
-.card p{font-size:.9rem;color:var(--muted)}
+/* ticket */
+[data-ui].ticket{font-family:var(--text);font-variant-numeric:tabular-nums;font-size:var(--s-small);line-height:1.45;color:#111;background:#fff;width:100%;max-width:310px;justify-self:center;align-self:end;padding:26px 20px 150px;position:relative;z-index:1;transform:rotate(3.5deg) translateY(4%);transform-origin:50% 100%;animation:drift 7s ease-in-out infinite alternate;
+  clip-path:polygon(0 8px,4% 0,8% 8px,12% 0,16% 8px,20% 0,24% 8px,28% 0,32% 8px,36% 0,40% 8px,44% 0,48% 8px,52% 0,56% 8px,60% 0,64% 8px,68% 0,72% 8px,76% 0,80% 8px,84% 0,88% 8px,92% 0,96% 8px,100% 0,100% 100%,0 100%)}
+@keyframes drift{from{transform:rotate(3.5deg) translateY(4%)}to{transform:rotate(2.2deg) translateY(1.5%)}}
+.ticket .t-head{text-align:center;font-weight:700;margin-bottom:10px}
+.ticket .t-head small{display:block;font-weight:400;font-size:var(--s-small)}
+.ticket ul{list-style:none;display:grid;gap:2px}
+.ticket li button{all:unset;box-sizing:border-box;width:100%;display:flex;justify-content:space-between;gap:10px;cursor:pointer;padding:2px 0}
+.ticket li button:hover{background:var(--mint)}
+.ticket li button:focus-visible{outline:2px solid #000}
+.ticket li.in{animation:slidein .35s var(--ease)}
+@keyframes slidein{from{opacity:0;transform:translateY(-8px)}}
+.ticket .t-total{display:flex;justify-content:space-between;margin-top:12px;padding-top:8px;font-weight:700;font-size:var(--s-body);border-top:2px dashed #111}
+.ticket .t-empty{font-size:var(--s-small);color:#555}
 
-/* steps */
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;counter-reset:s}
-.step{
-  background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:26px 24px;
-  position:relative;
-}
-.step::before{
-  counter-increment:s;content:counter(s);
-  position:absolute;top:-14px;left:24px;
-  width:30px;height:30px;border-radius:8px;
-  background:var(--gold);color:#14130f;font-weight:800;
-  display:grid;place-items:center;font-size:.9rem;
-}
-.step h3{font-size:1rem;margin:10px 0 8px}
-.step p{font-size:.9rem;color:var(--muted)}
+/* ============ SECCIONES ============ */
+.sec{padding:clamp(88px,12vw,200px) var(--m)}
+.rv{}
+.js .rv{opacity:0;transform:translateY(26px);transition:opacity .7s var(--ease),transform .7s var(--ease);transition-delay:var(--d,0ms)}
+.js .rv.in{opacity:1;transform:none}
 
-/* price */
-.price-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:stretch}
-.price{
-  background:linear-gradient(170deg,#1c2028,#15181e);
-  border:1px solid rgba(240,180,41,.35);border-radius:18px;padding:38px 34px;
-  position:relative;
-}
-.price .tag{
-  position:absolute;top:-12px;left:34px;background:var(--gold);color:#14130f;
-  font-size:.72rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
-  padding:5px 11px;border-radius:99px;
-}
-.price .amount{font-size:2.6rem;font-weight:800;letter-spacing:-.03em;line-height:1}
-.price .amount small{font-size:1rem;font-weight:500;color:var(--muted)}
-.price ul{list-style:none;margin:26px 0 28px;display:grid;gap:11px}
-.price li{display:flex;gap:10px;font-size:.93rem;color:#cdd3dd}
-.price li::before{content:"✓";color:var(--gold);font-weight:800}
-.price .btn{width:100%}
-.price .note{text-align:center;font-size:.8rem;color:var(--muted);margin-top:14px}
-.aside{
-  background:var(--bg2);border:1px solid var(--line);border-radius:18px;
-  padding:32px 30px;display:flex;flex-direction:column;justify-content:center;gap:18px;
-}
-.aside h3{font-size:1.05rem}
-.aside p{font-size:.9rem;color:var(--muted)}
-.aside .row{display:flex;gap:11px;font-size:.88rem;color:#cdd3dd}
-.aside .row b{color:var(--gold);flex:none}
+/* features: tablero */
+.tablero{padding:var(--m) var(--m) calc(var(--m)*3)}
+.board-grid{display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:104px;gap:var(--gap);grid-auto-flow:dense}
+.tile{position:relative;overflow:hidden;color:#000;display:flex;flex-direction:column;justify-content:flex-end;padding:20px}
+.tile h3,.tile .tn{font-family:var(--text);text-transform:none;letter-spacing:0;font-size:var(--s-body);font-weight:500;line-height:1.2;position:relative;z-index:2}
+.tile p{font-size:var(--s-small);line-height:1.35;max-width:34ch;position:relative;z-index:2;margin-top:2px}
+.tile .fx{position:absolute;z-index:1}
+.t-w6h2{grid-column:span 6;grid-row:span 2}
+.t-w3h2{grid-column:span 3;grid-row:span 2}
+.t-w6h4{grid-column:span 6;grid-row:span 4}
+.t-w3h4{grid-column:span 3;grid-row:span 4}
+.t-grey{background:var(--grey)}.t-mint{background:var(--mint)}.t-orange{background:var(--orange)}.t-surface{background:var(--surface)}
+.t-ink{background:#000;color:#fff}
+.tile.head{justify-content:flex-start}
+.tile.head h2{font-size:var(--s-head)}
+
+/* fx: mesas */
+.mesas{--u:46px;top:-14px;right:-70px;display:grid;grid-template-columns:repeat(4,calc(var(--u)*1.9));gap:calc(var(--u)*.18);transform:rotate(-3deg)}
+.mesas b{aspect-ratio:1;display:grid;place-items:center;background:#fff;font-weight:500;font-size:calc(var(--u)*.42)}
+.mesas b.o{background:#000;color:#fff}.mesas b.c{background:var(--orange)}
+/* fx: cierre */
+.cierre{top:20px;left:20px;font-family:var(--display);font-size:40px;line-height:1;letter-spacing:-.04em;white-space:nowrap}
+/* fx: backup */
+.okpill{top:24px;left:20px;background:var(--mint);color:#000;font-family:var(--display);text-transform:uppercase;font-size:44px;line-height:1;letter-spacing:-.03em;padding:.3em .45em;transform:rotate(-4deg)}
+/* fx: barril */
+.barril{top:-10px;left:50%;width:2.6em;height:11em;background:#000;font-size:34px;transform:translateX(-30%);}
+.barril i{position:absolute;left:0;right:0;bottom:0;height:62%;background:var(--mint)}
+.barril b{position:absolute;left:100%;bottom:62%;margin-left:.45em;transform:translateY(50%);font-family:var(--display);font-size:.62em;line-height:1;letter-spacing:-.03em;white-space:nowrap}
+/* fx: carta */
+.cfield{top:26px;left:-20px;right:-20px;display:grid;gap:12px;font-size:36px}
+.cfield .row{background:#fff;height:2em;display:flex;align-items:center;justify-content:space-between;padding:0 .5em;font-weight:500;white-space:nowrap}
+.cfield .row b{font-family:var(--display);letter-spacing:-.03em;font-size:.9em}
+.toggle{width:2.6em;height:1.4em;background:#000;position:relative;border-radius:99px;flex:none}
+.toggle::after{content:"";position:absolute;top:.2em;left:1.4em;width:1em;height:1em;background:var(--mint);border-radius:50%}
+.caret{display:inline-block;width:3px;height:1em;background:#000;margin-left:3px;vertical-align:-.12em;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+/* fx: ticket tile */
+.slip{top:-30px;right:5%;width:min(52%,300px);background:#fff;color:#111;font-variant-numeric:tabular-nums;font-size:var(--s-small);line-height:1.5;padding:18px 18px 40px;transform:rotate(4deg)}
+.slip div{display:flex;justify-content:space-between;gap:8px}
+/* fx: reportes */
+.mas{top:20px;right:-10px;background:#000;color:var(--mint);font-family:var(--display);text-transform:uppercase;font-size:56px;line-height:1;letter-spacing:-.04em;padding:.25em .4em}
+/* fx: soporte */
+.chat{top:18px;left:18px;right:-30px;display:grid;gap:8px;font-size:18px}
+.chat span{padding:10px 14px;background:#fff;max-width:80%;line-height:1.25}
+.chat span.me{justify-self:end;background:#000;color:#fff;margin-right:34px}
+
+/* oficio: archivo */
+.oficio{background:var(--mint);padding:clamp(88px,12vw,200px) var(--m)}
+.of-head{display:grid;grid-template-columns:repeat(12,1fr);column-gap:var(--gap);align-items:end;margin-bottom:clamp(40px,6vw,88px)}
+.of-head h2{grid-column:1/7}
+.of-head p{grid-column:8/13;font-size:var(--s-lead);line-height:1.3;font-weight:500}
+.of-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gap)}
+.of-grid figure{overflow:hidden;position:relative;background:#000}
+.of-grid img,.of-grid video{display:block;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.1)}
+.of-cal{grid-column:1/8;background:transparent!important;overflow:visible!important}
+.of-cal img{height:auto;filter:none;mix-blend-mode:multiply;transform:rotate(-2.5deg)}
+.of-vid{grid-column:8/13;aspect-ratio:3/2}
+.of-tap{grid-column:span 4;aspect-ratio:1/1}
+.of-tap img{object-position:50% 42%;transition:transform .8s var(--ease)}
+.of-tap:hover img{transform:scale(1.05)}
+.of-vid video{object-position:50% 50%}
+
+/* como funciona: barra */
+.bar-sec{background:#000;color:#fff;padding:clamp(88px,12vw,200px) var(--m)}
+.bar-sec h2{max-width:14ch;margin-bottom:64px}
+.bar{display:flex;gap:6px;height:22vh;min-height:150px}
+.seg{flex:var(--g) 1 0;min-width:18%;padding:20px;color:#000;display:flex;align-items:flex-start}
+.seg .cl{display:none}
+.seg strong{font-family:var(--text);font-weight:500;font-size:clamp(1.25rem,2vw,1.875rem);line-height:1.1}
+.clauses{display:flex;gap:6px;margin-top:20px}
+.clauses p{flex:var(--g) 1 0;min-width:18%;max-width:100%;font-size:var(--s-body);line-height:1.4;padding-right:12px}
+.seg.a,.clauses .a{--g:2}.seg.b,.clauses .b{--g:4}.seg.c,.clauses .c{--g:6}
+.seg.a{background:var(--mint)}.seg.b{background:var(--orange)}.seg.c{background:var(--grey)}
+
+/* precios */
+.planes{display:grid;grid-template-columns:5fr 7fr;min-height:min(90svh,820px)}
+.plan{padding:40px var(--m);display:flex;flex-direction:column}
+.plan h2{font-size:var(--s-head)}
+.plan .who{margin-top:20px;font-size:var(--s-lead);line-height:1.3;max-width:26ch;font-weight:500}
+.plan .inc{margin-top:20px;max-width:46ch;line-height:1.5}
+.plan .bottom{margin-top:auto;padding-top:56px}
+.plan .price{font-family:var(--display);font-size:var(--s-hero);letter-spacing:-.04em;line-height:.95;white-space:nowrap}
+.plan .per{margin-top:10px;font-weight:500}
+.plan .btn{margin-top:28px}
+.plan.p1{background:var(--grey)}.plan.p2{background:var(--orange)}
 
 /* faq */
-.faq{display:grid;gap:12px;max-width:820px}
-details{
-  background:var(--card);border:1px solid var(--line);border-radius:12px;
-  padding:18px 22px;
-}
-details[open]{border-color:#39414e}
-summary{cursor:pointer;font-weight:600;font-size:.95rem;list-style:none;display:flex;justify-content:space-between;gap:16px;align-items:center}
+.faq-sec{background:var(--bg);padding:clamp(88px,12vw,200px) var(--m);display:grid;grid-template-columns:repeat(12,1fr);column-gap:var(--gap);align-items:start}
+.faq-sec h2{grid-column:1/5;position:sticky;top:96px}
+.faq{grid-column:5/13;display:grid;gap:var(--gap)}
+details{background:var(--surface);min-height:72px;transition:background .25s}
+summary{list-style:none;cursor:pointer;min-height:72px;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;font-weight:500;font-size:var(--s-body);line-height:1.25}
 summary::-webkit-details-marker{display:none}
-summary::after{content:"+";color:var(--gold);font-size:1.2rem;font-weight:700;flex:none;transition:.2s}
-details[open] summary::after{transform:rotate(45deg)}
-details p{margin-top:12px;font-size:.9rem;color:var(--muted)}
+summary:hover{background:#ececec}
+details[open] summary:hover{background:transparent}
+summary i{position:relative;width:16px;height:16px;flex:none}
+summary i::before,summary i::after{content:"";position:absolute;left:0;top:6.5px;width:16px;height:3px;background:currentColor;transition:transform .3s var(--ease)}
+summary i::after{transform:rotate(90deg)}
+details[open] summary i::after{transform:rotate(0)}
+details[open]{background:var(--mint)}
+details p{padding:0 24px 24px;max-width:52ch;line-height:1.5}
 
-/* final cta */
-.final{
-  background:linear-gradient(140deg,rgba(240,180,41,.12),rgba(240,180,41,.02));
-  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
-  padding:76px 0;text-align:center;
+/* cta */
+.cta{background:var(--mint);min-height:90svh;padding:40px var(--m);display:grid;grid-template-columns:repeat(12,1fr);column-gap:var(--gap);align-items:center}
+.cta-l{grid-column:1/6;align-self:end;min-width:0}
+.cta-l h2{line-height:.92}
+.cta-l p{margin-top:24px;font-size:var(--s-body);max-width:34ch}
+.dialog{grid-column:7/12;justify-self:end;width:100%;max-width:440px;background:#fff;padding:28px;box-shadow:0 24px 60px rgba(0,0,0,.28)} /* taste-skill-ignore: dialogo abierto sobre la pagina */
+[data-ui].dialog{font-family:var(--text)}
+.dialog h3{font-family:var(--text);text-transform:none;letter-spacing:-.01em;font-size:1.5rem;font-weight:500;margin-bottom:20px}
+.dialog label,.dialog legend{display:block;font-size:var(--s-small);font-weight:500;margin-bottom:8px}
+.dialog input[type=text]{width:100%;height:52px;border:0;background:var(--surface);padding:0 14px;font-size:var(--s-body);border-radius:0}
+.dialog input[type=text]:focus{outline:3px solid #000;outline-offset:0}
+.dialog fieldset{border:0;margin-top:18px}
+.seg2{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap)}
+.seg2 input{position:absolute;opacity:0;pointer-events:none}
+.seg2 label{margin:0;height:52px;display:grid;place-items:center;background:var(--surface);cursor:pointer;font-size:var(--s-body);transition:background .2s}
+.seg2 input:checked+label{background:#000;color:var(--mint)}
+.seg2 input:focus-visible+label{outline:3px solid #000;outline-offset:2px}
+.dialog .btn{width:100%;margin-top:24px;min-height:56px}
+.dialog .fine{margin-top:12px;font-size:var(--s-small);color:var(--muted);text-align:center}
+
+/* footer */
+footer{background:var(--orange);min-height:72svh;padding:40px var(--m) 28px;display:flex;flex-direction:column}
+.f-top{display:grid;grid-template-columns:repeat(12,1fr);column-gap:var(--gap);font-size:var(--s-small);line-height:1.4}
+.f-top p{grid-column:span 3}
+.f-top .logo{grid-column:span 3}
+.f-top a.up{grid-column:12/13;justify-self:end;text-decoration:underline;text-underline-offset:4px}
+.f-big{margin-top:auto;padding-top:96px}
+.f-big a{display:block;font-family:var(--display);font-weight:700;letter-spacing:-.04em;line-height:.95;font-size:8vw;white-space:nowrap;transition:transform .35s var(--ease)}
+.f-big a:hover{transform:translateX(10px)}
+.f-big span{display:block;margin-bottom:16px;font-size:var(--s-lead);font-weight:500}
+.credits{margin-top:56px;font-size:var(--s-small);max-width:70ch}
+.f-meta{display:flex;justify-content:space-between;gap:16px;font-size:var(--s-small);margin-top:20px}
+
+/* ============ TELEFONO / TABLET ============ */
+@media (max-width:1000px){
+  .hero{display:block;min-height:0;padding:0 var(--m) 0}
+  .hero-l{display:block;padding-bottom:0}
+  .hero-l .logo{display:flex}
+  .hero-r{min-height:0;padding-top:0}
+  .hero-nav{display:none}
+  .hero-l .lead{padding-top:0;margin-top:0;max-width:30ch;font-size:1.125rem}
+  /* orden: marca, titulo, frase, boton, tablero */
+  .hero{display:flex;flex-direction:column}
+  .hero-l,.hero-r{display:contents}
+  .hero-l .logo{order:1;padding:var(--m) 0 0}
+  h1{order:2;font-size:10vw;margin-top:28px}
+  .hero-l .lead{order:3;margin-top:24px}
+  .hero-l .btn{order:4;width:100%;margin-top:24px}
+  .hero-l .note{order:5;margin-top:12px}
+  .board-wrap{order:6;margin:72px calc(var(--m)*-1) 0;min-height:0;flex:none}
+  .board{position:relative;display:block;padding:var(--m)}
+  .carta{padding-top:48px}
+  [data-ui].ticket{max-width:none;margin-top:var(--m);transform:none;animation:none;padding-bottom:60px}
+  .fig{left:var(--m);width:min(290px,78vw)}
+  .fig b{font-size:1.75rem}
+  .board-grid{grid-template-columns:repeat(2,1fr);grid-auto-rows:28vw;gap:6px}
+  .tile{padding:16px}
+  .t-w6h2,.t-w6h4{grid-column:span 2}.t-w3h2{grid-column:span 1;grid-row:span 2}
+  .t-w6h4{grid-row:span 3}.t-w3h4{grid-column:span 1;grid-row:span 3}
+  .tile h3,.tile .tn{font-size:1rem}.tile p{font-size:.875rem}
+  .tile.head h2{font-size:7.4vw}
+  .mesas{--u:6.6vw;right:-30px}
+  .cierre{font-size:5vw}
+  .okpill{font-size:6.2vw}
+  .barril{font-size:5.4vw}
+  .cfield{font-size:5.6vw;left:14px}
+  .slip{font-size:13px;width:60%}
+  .mas{font-size:9vw}
+  .chat{font-size:14px;right:-10px}
+  .of-head{display:block}.of-head h2{margin-bottom:24px}
+  .of-cal,.of-vid{grid-column:span 12}
+  .of-tap{grid-column:span 12;aspect-ratio:4/3}
+  .bar{flex-direction:column;height:70svh;min-height:420px}
+  .seg{min-width:0;min-height:72px;flex:var(--g) 1 0;flex-direction:column}
+  .clauses{display:none}
+  .seg .cl{display:block;font-size:1rem;line-height:1.35;margin-top:8px;max-width:34ch}
+  .planes{grid-template-columns:1fr}
+  .plan{min-height:70svh}
+  .plan.p2{order:-1}
+  .plan .price{font-size:13vw}
+  .plan .btn{width:100%}
+  .faq-sec{display:block}
+  .faq-sec h2{position:static;font-size:9vw;margin-bottom:32px}
+  .faq{gap:6px}
+  summary{min-height:64px;padding:12px 18px;font-size:1.125rem}
+  details p{padding:0 18px 20px;font-size:1rem}
+  .cta{display:flex;flex-direction:column;align-items:stretch;padding-block:56px;gap:48px}
+  .cta-l h2{font-size:10.5vw}
+  .dialog{max-width:none;justify-self:stretch}
+  .f-top{display:block}.f-top>*{margin-bottom:10px}
+  .f-top a.up{display:inline-block}
+  .f-big a{font-size:8.2vw}
+  .f-meta{flex-direction:column;gap:6px}
 }
-.final h2{font-size:clamp(1.6rem,3.6vw,2.4rem);margin-bottom:16px}
-.final p{color:var(--muted);max-width:52ch;margin:0 auto 30px}
-
-footer{padding:36px 0;font-size:.84rem;color:var(--muted)}
-footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
-
-/* responsive */
-@media (max-width:860px){
-  .grid,.steps{grid-template-columns:1fr 1fr}
-  .price-wrap{grid-template-columns:1fr}
-  nav .links{display:none}
+@media (max-width:1000px){
+  .seg .cl{margin-top:8px}
 }
-@media (max-width:600px){
-  .grid,.steps{grid-template-columns:1fr}
-  .strip .wrap{grid-template-columns:1fr 1fr}
-  .strip .cell:nth-child(2){border-right:none}
-  .strip .cell:nth-child(1),.strip .cell:nth-child(2){border-bottom:1px solid var(--line)}
-  .hero{padding:60px 0 50px}
-  section{padding:60px 0}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .js h1 .ln>span,.js .after-h{transform:none;opacity:1}
+  .js .rv{opacity:1;transform:none}
 }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="wrap">
-    <nav>
-      <a href="#" class="logo"><span class="logo-mark">Z</span> ZabaLABS</a>
-      <div class="links">
-        <a href="#funciones">Funciones</a>
-        <a href="#como">Cómo funciona</a>
-        <a href="#precio">Precio</a>
-        <a href="#preguntas">Preguntas</a>
-      </div>
-      <a class="btn btn-gold wa-link" href="#">Quiero mi sistema</a>
+<header class="hero">
+  <div class="hero-l">
+    <a href="#" class="logo" aria-label="ZabaLABS, inicio"><i>Z</i> ZabaLABS</a>
+    <p class="lead after-h">Mesas, comandas, caja y tickets de 80&nbsp;mm en una sola pantalla. Instalado en 24&nbsp;horas.</p>
+    <a class="btn wa-link after-h" href="#">Quiero que me lo instalen</a>
+    <p class="note after-h">14 días gratis. Sin contrato largo. Soporte en español.</p>
+  </div>
+  <div class="hero-r">
+    <nav class="hero-nav" aria-label="Principal">
+      <a href="#funciones">Funciones</a>
+      <a href="#como">Cómo funciona</a>
+      <a href="#precio">Precio</a>
+      <a href="#preguntas">Preguntas</a>
     </nav>
+    <h1><span class="ln"><span>Tu bar,</span></span><span class="ln"><span>ordenado</span></span></h1>
+    <div class="board-wrap after-h">
+      <div class="fig" aria-live="polite"><b id="figTotal">$ 0</b><span>Mesa 7, hasta ahora. Tocá la carta y armá la comanda.</span></div>
+      <div class="board">
+        <div class="carta" id="carta" role="group" aria-label="Carta de ejemplo: tocá para agregar a la comanda"></div>
+        <div class="ticket" data-ui id="ticket">
+          <div class="t-head">BAR DE EJEMPLO<small>Mesa 7 · Mozo Lu · Comanda</small></div>
+          <ul id="tItems"><li class="t-empty">Sin pedidos todavía</li></ul>
+          <div class="t-total"><span>TOTAL</span><span id="tTotal">$ 0</span></div>
+        </div>
+      </div>
+    </div>
   </div>
 </header>
 
-<div class="hero">
-  <div class="wrap">
-    <span class="eyebrow">Gestión de bares</span>
-    <h1>Tu bar, ordenado.<br><span class="gold">Una sola pantalla.</span></h1>
-    <p class="lead">
-      Mesas, comandas, cierre de caja y tickets en 80&nbsp;mm. Funciona en la compu del local,
-      con backup diario y sin depender de internet para cobrar.
-    </p>
-    <div class="cta-row">
-      <a class="btn btn-gold wa-link" href="#">Quiero que me lo instalen</a>
-      <a class="btn btn-ghost" href="#funciones">Ver qué incluye</a>
-    </div>
-    <p class="micro">Instalación en menos de 24 horas · Sin contratos largos · Soporte en español</p>
-  </div>
-</div>
+<main>
 
-<div class="strip">
-  <div class="wrap">
-    <div class="cell"><b>24 h</b><span>puesta en marcha</span></div>
-    <div class="cell"><b>Diario</b><span>backup automático</span></div>
-    <div class="cell"><b>80 mm</b><span>tickets de comanda</span></div>
-    <div class="cell"><b>Sin límite</b><span>de mesas</span></div>
-  </div>
-</div>
+<section id="funciones" class="tablero" aria-labelledby="h-fun">
+  <div class="board-grid">
+    <div class="tile head t-w6h2 t-surface rv"><h2 id="h-fun">Lo que pide el turno</h2></div>
 
-<section id="funciones">
-  <div class="wrap">
-    <div class="sec-head">
-      <h2>Lo que necesita un bar, sin adornos</h2>
-      <p>Cada función está pensada para el turno real: gente esperando, caja abierta y nadie con tiempo de leer un manual.</p>
+    <div class="tile t-w3h2 t-orange rv" style="--d:80ms">
+      <div class="fx cierre" data-ui>$ 1,28 M</div>
+      <h3>Cierre por turno</h3><p>Medios de pago, diferencias y quién cerró.</p>
     </div>
-    <div class="grid">
-      <div class="card">
-        <div class="ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
-        <h3>Mesas y comandas</h3>
-        <p>Mapa de mesas, apertura, agregados y cierre por mesa. Se ve de un vistazo qué está ocupado y qué falta cobrar.</p>
+
+    <div class="tile t-w3h2 t-ink rv" style="--d:160ms">
+      <div class="fx okpill" data-ui>Backup ok</div>
+      <h3>Backup diario</h3><p>Se hace solo, todas las noches.</p>
+    </div>
+
+    <div class="tile t-w6h4 t-mint rv">
+      <div class="fx mesas" data-ui aria-hidden="true">
+        <b>1</b><b class="o">2</b><b class="o">3</b><b>4</b>
+        <b class="c">5</b><b>6</b><b class="o">7</b><b class="o">8</b>
+        <b>9</b><b class="o">10</b><b class="c">11</b><b>12</b>
+        <b class="o">13</b><b>14</b><b>15</b><b class="o">16</b>
       </div>
-      <div class="card">
-        <div class="ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h9"/></svg></div>
-        <h3>Carta editable</h3>
-        <p>Precios, rubros y promociones que cambiás desde el panel. Sin tocar archivos ni llamar a nadie.</p>
+      <h3>Mesas y comandas</h3><p>Se ve de un vistazo qué está ocupado y qué falta cobrar.</p>
+    </div>
+
+    <div class="tile t-w3h4 t-orange rv" style="--d:80ms">
+      <div class="fx barril" data-ui aria-hidden="true"><i></i><b>31&nbsp;L</b></div>
+      <h3>Barriles y stock</h3><p>Litros servidos y rendimiento por barril, para saber dónde se pierde plata.</p>
+    </div>
+
+    <div class="tile t-w3h4 t-grey rv" style="--d:160ms">
+      <div class="fx cfield" data-ui aria-hidden="true">
+        <div class="row"><span>IPA</span><span class="toggle"></span></div>
+        <div class="row"><span>Precio</span><b>$ 6.500<span class="caret"></span></b></div>
       </div>
-      <div class="card">
-        <div class="ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></div>
-        <h3>Cierre por turno</h3>
-        <p>Total por turno, medios de pago y diferencias de caja. Queda registrado quién cerró y cuándo.</p>
+      <h3>Carta editable</h3><p>Precios, rubros y promos desde el panel. Sin llamar a nadie.</p>
+    </div>
+
+    <div class="tile t-w6h2 t-ink rv">
+      <div class="fx slip" data-ui aria-hidden="true">
+        <div><span>2 x IPA</span><span>13.000</span></div>
+        <div><span>1 x Picada x2</span><span>18.000</span></div>
+        <div><b>TOTAL</b><b>31.000</b></div>
       </div>
-      <div class="card">
-        <div class="ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8h5M9.5 12h5"/></svg></div>
-        <h3>Tickets de 80 mm</h3>
-        <p>Comanda para barra y ticket para el cliente, con el nombre y el logo del local.</p>
+      <h3>Tickets de 80 mm</h3><p>Comanda para la barra y ticket para el cliente, con tu logo.</p>
+    </div>
+
+    <div class="tile t-w3h2 t-mint rv" style="--d:80ms">
+      <div class="fx mas" data-ui>IPA</div>
+      <h3>Reportes</h3><p>Lo más vendido y cómo viene el turno.</p>
+    </div>
+
+    <div class="tile t-w3h2 t-grey rv" style="--d:160ms">
+      <div class="fx chat" data-ui aria-hidden="true"><span>¿Se imprimió la comanda?</span><span class="me">Sí, ya está.</span></div>
+      <h3>Soporte por WhatsApp</h3><p>Una persona real, en horario comercial.</p>
+    </div>
+  </div>
+</section>
+
+<section class="oficio" aria-labelledby="h-of">
+  <div class="of-head">
+    <h2 id="h-of" class="rv">El oficio no cambia</h2>
+    <p class="rv" style="--d:100ms">Cartas, barriles y canillas se cuentan desde siempre. Lo que cambia es que la cuenta ahora se lleva sola.</p>
+  </div>
+  <div class="of-grid">
+    <figure class="of-cal rv"><img src="assets/img/calendario-barril-1934.jpg" width="1920" height="1033" loading="lazy" decoding="async" alt="Dos calendarios de cartón de 1934 de una cervecería, con forma de barril: uno con el escudo de la marca y otro con los meses del año."></figure>
+    <figure class="of-vid rv" style="--d:100ms"><video autoplay muted loop playsinline preload="metadata" poster="assets/img/servido-cerveza-poster.jpg" width="720" height="480" aria-label="Una cerveza se sirve en un vaso inclinado hasta formar espuma"><source src="assets/video/servido-cerveza.webm" type="video/webm"></video></figure>
+    <figure class="of-tap rv"><img src="assets/img/canilla-lager-1961.jpg" width="1200" height="1600" loading="lazy" decoding="async" alt="Manija de canilla de cerveza lager con una etiqueta ovalada, de 1961."></figure>
+    <figure class="of-tap rv" style="--d:100ms"><img src="assets/img/canilla-black-tan-1961.jpg" width="1200" height="1600" loading="lazy" decoding="async" alt="Manija de canilla de cerveza black and tan, de 1961."></figure>
+    <figure class="of-tap rv" style="--d:200ms"><img src="assets/img/canilla-stock-ale-1961.jpg" width="1200" height="1600" loading="lazy" decoding="async" alt="Manija de canilla de cerveza stock ale, de 1961."></figure>
+  </div>
+</section>
+
+<section id="como" class="bar-sec" aria-labelledby="h-como">
+  <h2 id="h-como" class="rv">Andando en 24 horas</h2>
+  <div class="bar rv" data-ui>
+    <div class="seg a"><strong>Una charla</strong><span class="cl">Primero, nos contás cómo trabaja el local.</span></div>
+    <div class="seg b"><strong>Menos de 24 horas</strong><span class="cl">Cargamos tu carta y te mandamos el link de activación. Elegís tu contraseña.</span></div>
+    <div class="seg c"><strong>Todos los días</strong><span class="cl">Ya cobrás. Nosotros nos quedamos con el backup y las actualizaciones.</span></div>
+  </div>
+  <div class="clauses">
+    <p class="a rv">Primero, nos contás cómo trabaja el local: mesas, quién cobra y qué se imprime.</p>
+    <p class="b rv" style="--d:100ms">Después, cargamos tu carta y te mandamos un link de activación. Elegís tu contraseña: no la sabemos ni nosotros.</p>
+    <p class="c rv" style="--d:200ms">Y ya cobrás, desde la compu o el celular del local. Nosotros nos quedamos con el backup y las actualizaciones.</p>
+  </div>
+</section>
+
+<section id="precio" aria-labelledby="h-precio">
+  <div class="planes">
+    <div class="plan p1">
+      <h2 id="h-precio" class="rv">14 días gratis</h2>
+      <p class="who rv" style="--d:80ms">Para ver si te sirve, con tu carta ya cargada y sin tarjeta.</p>
+      <p class="inc rv" style="--d:140ms">Es el mismo sistema completo. Si no seguís, no se borra nada: te llevás todo lo que cargaste en Excel y queda en modo consulta.</p>
+      <div class="bottom rv">
+        <div class="price">$0</div><p class="per">por 14 días</p>
+        <a class="btn wa-link" href="#">Probar gratis</a>
       </div>
-      <div class="card">
-        <div class="ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5.5" rx="6.5" ry="2.5"/><path d="M5.5 5.5v6c0 1.4 2.9 2.5 6.5 2.5s6.5-1.1 6.5-2.5v-6"/><path d="M5.5 11.5v6c0 1.4 2.9 2.5 6.5 2.5s6.5-1.1 6.5-2.5v-6"/></svg></div>
-        <h3>Barriles y stock</h3>
-        <p>Control de barriles, litros servidos y rendimiento por barril, para saber dónde se pierde plata.</p>
-      </div>
-      <div class="card">
-        <div class="ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 20h18"/><path d="M6 20v-6M11 20V8M16 20v-9M21 20V5"/></svg></div>
-        <h3>Reportes</h3>
-        <p>Ventas por día, producto más vendido y evolución del turno, sin planillas de Excel armadas a mano.</p>
+    </div>
+    <div class="plan p2">
+      <h2 class="rv">Después, por mes</h2>
+      <p class="who rv" style="--d:80ms">Por local. Sin costo de alta y sin permanencia mínima.</p>
+      <p class="inc rv" style="--d:140ms">Sin límite de mesas ni usuarios. Instalación y carga inicial a cargo nuestro, hosting incluido, backup todos los días, actualizaciones, soporte por WhatsApp y el logo de tu bar en los tickets.</p>
+      <div class="bottom rv">
+        <div class="price">$49.000</div><p class="per">por mes, por local</p>
+        <a class="btn btn-white wa-link pay-anchor" href="#">Empezar ahora</a>
       </div>
     </div>
   </div>
 </section>
 
-<section id="como" style="background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
-  <div class="wrap">
-    <div class="sec-head">
-      <h2>Se instala una vez. Después es entrar y usar.</h2>
-      <p>No tenés que configurar servidores, ni comprar nada raro. Nos ocupamos nosotros.</p>
-    </div>
-    <div class="steps">
-      <div class="step">
-        <h3>Hablás con nosotros</h3>
-        <p>Nos contás cómo trabaja el local: cuántas mesas, quién cobra, qué se imprime. Sin formularios eternos.</p>
-      </div>
-      <div class="step">
-        <h3>Te lo dejamos andando</h3>
-        <p>Cargamos la carta con tus datos y te mandamos un link de activación. Ahí elegís tu contraseña: no la sabemos ni nosotros.</p>
-      </div>
-      <div class="step">
-        <h3>Empezás a cobrar</h3>
-        <p>Lo abrís desde la compu o el celular del local. Nosotros nos quedamos con el backup y las actualizaciones.</p>
-      </div>
-    </div>
+<section id="preguntas" class="faq-sec" aria-labelledby="h-faq">
+  <h2 id="h-faq" class="rv">Tus dudas</h2>
+  <div class="faq">
+    <details name="faq" class="rv"><summary>¿Qué pasa si se corta internet?<i></i></summary><p>El sistema corre en el servidor con su propia base de datos, así que el local sigue operando. Lo que necesita conexión es abrir la página desde otro lado; en la compu del bar se puede dejar abierta.</p></details>
+    <details name="faq" class="rv"><summary>¿Quién crea la contraseña?<i></i></summary><p>Vos. Al instalarlo te mandamos un link de activación de un solo uso y ahí elegís tu contraseña de administrador. Nosotros no la vemos ni la guardamos, y si la olvidás te generamos otro link.</p></details>
+    <details name="faq" class="rv"><summary>¿Dónde quedan mis datos?<i></i></summary><p>En un servidor propio, separado del resto de los clientes, con acceso restringido. Se hace un backup automático todos los días y podés pedir una copia cuando quieras.</p></details>
+    <details name="faq" class="rv"><summary>¿Necesito comprar una computadora especial?<i></i></summary><p>No. Funciona en cualquier compu con navegador, y también desde el celular o la tablet del local.</p></details>
+    <details name="faq" class="rv"><summary>¿Puedo usar mi propio dominio?<i></i></summary><p>Sí. Si ya tenés un dominio, lo apuntamos y los clientes entran por ahí. Se cotiza aparte.</p></details>
+    <details name="faq" class="rv"><summary>¿Puedo probarlo antes de pagar?<i></i></summary><p>Sí. Te damos 14 días con el sistema andando y tu carta cargada. Si al terminar no seguís, no se borra nada: podés descargar todo lo que cargaste en Excel y el sistema queda en modo consulta.</p></details>
+    <details name="faq" class="rv"><summary>¿Cómo cancelo?<i></i></summary><p>Avisás y se da de baja el servicio al cierre del mes. Antes te entregamos una copia de tus datos.</p></details>
+    <details name="faq" class="rv"><summary>¿Sirve para un bar con varias cajas?<i></i></summary><p>Está pensado para una caja por local, que es el caso de la mayoría de los bares chicos. Si necesitás varias, lo hablamos.</p></details>
   </div>
 </section>
 
-<section id="precio">
-  <div class="wrap">
-    <div class="sec-head">
-      <h2>Un precio, todo incluido</h2>
-      <p>14 días de prueba gratis, sin tarjeta. Si te sirve, seguís por mes; si no, te llevás tus datos.</p>
-    </div>
-    <div class="price-wrap">
-      <div class="price">
-        <span class="tag">Lanzamiento</span>
-        <div class="amount">$49.000 <small>/ mes</small></div>
-        <p style="color:var(--muted);font-size:.9rem;margin-top:10px">Por local. Sin costo de alta. Los primeros 14 días son gratis.</p>
-        <ul>
-          <li>Sistema completo, sin límite de mesas ni usuarios</li>
-          <li>Instalación y carga inicial a cargo nuestro</li>
-          <li>Hosting incluido, no necesitás servidor propio</li>
-          <li>Backup automático todos los días</li>
-          <li>Actualizaciones y correcciones incluidas</li>
-          <li>Soporte por WhatsApp en horario comercial</li>
-          <li>Tu logo y el nombre del local en los tickets</li>
-        </ul>
-        <a class="btn btn-gold wa-link" href="#">Probar 14 días gratis</a>
-        <p class="note">Sin tarjeta para empezar. Después, facturación mensual sin permanencia mínima.</p>
-      </div>
-      <div class="aside">
-        <h3>¿Para quién es?</h3>
-        <p>Bares, cervecerías y pubs con una caja y varias mesas, que hoy anotan en papel o en una planilla y pierden el control del turno.</p>
-        <div class="row"><b>—</b><span>Si tenés varias sucursales, cada local va con su propia instancia.</span></div>
-        <div class="row"><b>—</b><span>Si querés usar tu propio dominio, también se puede.</span></div>
-        <div class="row"><b>—</b><span>Tus datos son tuyos: te los entregamos si algún día te vas.</span></div>
-        <a class="btn btn-ghost wa-link" href="#">Hacer una consulta</a>
-      </div>
-    </div>
+<section id="empezar" class="cta" aria-labelledby="h-cta">
+  <div class="cta-l">
+    <h2 id="h-cta" class="rv">Probalo<br>en tu bar</h2>
+    <p class="rv" style="--d:100ms">Tocás el botón y te abre WhatsApp con tus datos. Te contestamos y te mostramos el sistema con tu carta cargada.</p>
   </div>
+  <form class="dialog rv" data-ui id="startForm" style="--d:120ms">
+    <h3>Nombrá tu bar</h3>
+    <label for="barName">Nombre del local</label>
+    <input type="text" id="barName" name="bar" value="Cervecería El Fogón" autocomplete="organization">
+    <fieldset>
+      <legend>¿Cuántas mesas tenés?</legend>
+      <div class="seg2">
+        <input type="radio" name="mesas" id="m1" value="hasta 15 mesas" checked><label for="m1">Hasta 15</label>
+        <input type="radio" name="mesas" id="m2" value="más de 15 mesas"><label for="m2">Más de 15</label>
+      </div>
+    </fieldset>
+    <button class="btn btn-ink" type="submit">Pedir mi prueba gratis</button>
+    <p class="fine">14 días sin tarjeta.</p>
+  </form>
 </section>
 
-<section id="preguntas">
-  <div class="wrap">
-    <div class="sec-head">
-      <h2>Preguntas frecuentes</h2>
-      <p>Las dudas que aparecen siempre antes de decidir.</p>
-    </div>
-    <div class="faq">
-      <details>
-        <summary>¿Qué pasa si se corta internet?</summary>
-        <p>El sistema corre en el servidor con su propia base de datos, así que el local sigue operando. Lo que necesita conexión es abrir la página desde otro lado; en la compu del bar se puede dejar abierta.</p>
-      </details>
-      <details>
-        <summary>¿Quién crea la contraseña?</summary>
-        <p>Vos. Al instalarlo te mandamos un link de activación de un solo uso y ahí elegís tu contraseña de administrador. Nosotros no la vemos ni la guardamos, y si la olvidás te generamos otro link.</p>
-      </details>
-      <details>
-        <summary>¿Dónde quedan mis datos?</summary>
-        <p>En un servidor propio, separado del resto de los clientes, con acceso restringido. Se hace un backup automático todos los días y podés pedir una copia cuando quieras.</p>
-      </details>
-      <details>
-        <summary>¿Necesito comprar una computadora especial?</summary>
-        <p>No. Funciona en cualquier compu con navegador, y también desde el celular o la tablet del local.</p>
-      </details>
-      <details>
-        <summary>¿Puedo usar mi propio dominio?</summary>
-        <p>Sí. Si ya tenés un dominio, lo apuntamos y los clientes entran por ahí. Se cotiza aparte.</p>
-      </details>
-      <details>
-        <summary>¿Puedo probarlo antes de pagar?</summary>
-        <p>Sí. Te damos 14 días con el sistema andando y tu carta cargada. Si al terminar no seguís, no se borra nada: podés descargar todo lo que cargaste en Excel y el sistema queda en modo consulta.</p>
-      </details>
-      <details>
-        <summary>¿Cómo cancelo?</summary>
-        <p>Avisás y se da de baja el servicio al cierre del mes. Antes te entregamos una copia de tus datos.</p>
-      </details>
-      <details>
-        <summary>¿Sirve para un bar con varias cajas?</summary>
-        <p>Está pensado para una caja por local, que es el caso de la mayoría de los bares chicos. Si necesitás varias, lo hablamos.</p>
-      </details>
-    </div>
-  </div>
-</section>
-
-<div class="final">
-  <div class="wrap">
-    <h2>Probalo con los datos de tu bar</h2>
-    <p>Contanos cuántas mesas tenés y cómo cobrás hoy. Te mostramos el sistema funcionando con tu carta.</p>
-    <a class="btn btn-wa wa-link" href="#">Escribir por WhatsApp</a>
-  </div>
-</div>
+</main>
 
 <footer>
-  <div class="wrap">
-    <span>ZabaLABS · Sistemas para gastronomía</span>
+  <div class="f-top">
+    <a href="#" class="logo" aria-label="ZabaLABS, inicio"><i>Z</i> ZabaLABS</a>
+    <p>Sistemas para gastronomía.</p>
+    <p>Soporte por WhatsApp en horario comercial.</p>
+    <a class="up" href="#">Volver arriba</a>
+  </div>
+  <div class="f-big">
+    <span>Escribinos por WhatsApp</span>
+    <a class="wa-link" href="#">11 2632-6367</a>
+  </div>
+  <p class="credits">Imágenes: calendarios Daufer-Lieberman (1934), canillas Neuweiler (1961) y el video «One example of how to pour beer», todo dominio público vía Wikimedia Commons.</p>
+  <div class="f-meta">
     <span>zabalabs.tech</span>
+    <span>ZabaLABS</span>
+    <span>Argentina · 2026</span>
   </div>
 </footer>
 
 <script>
 (function(){
+  /* ---------- WhatsApp y pago (misma configuracion de siempre) ---------- */
   var tel = String(getComputedStyle(document.documentElement).getPropertyValue('--wa')).trim() || "5491100000000";
-  var msg = encodeURIComponent("Hola, vi la web de ZabaLABS y quiero información sobre el sistema para mi bar.");
-  var url = "https://wa.me/" + tel + "?text=" + msg;
+  function wa(text){ return "https://wa.me/" + tel + "?text=" + encodeURIComponent(text); }
+  var url = wa("Hola, vi la web de ZabaLABS y quiero información sobre el sistema para mi bar.");
   document.querySelectorAll(".wa-link").forEach(function(a){ a.href = url; a.target = "_blank"; a.rel = "noopener"; });
 
   var pago = String(getComputedStyle(document.documentElement).getPropertyValue('--pago')).trim().replace(/^["']+|["']+$/g, "");
   if (pago && pago.indexOf("http") === 0) {
     var b = document.createElement("a");
-    b.className = "btn btn-ghost";
-    b.href = pago;
-    b.target = "_blank";
-    b.rel = "noopener";
+    b.className = "btn";
+    b.href = pago; b.target = "_blank"; b.rel = "noopener";
     b.textContent = "Pagar con MercadoPago";
     b.style.marginTop = "10px";
-    b.style.display = "flex";
-    document.querySelector(".price .btn-gold").insertAdjacentElement("afterend", b);
+    document.querySelector(".pay-anchor").insertAdjacentElement("afterend", b);
+  }
+
+  /* ---------- Formulario del cierre ---------- */
+  document.getElementById("startForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var f = e.target, name = (f.bar.value || "").trim() || "mi bar";
+    var mesas = f.querySelector("input[name=mesas]:checked").value;
+    window.open(wa("Hola, soy de " + name + " (" + mesas + "). Quiero probar el sistema de ZabaLABS 14 días."), "_blank", "noopener");
+  });
+
+  /* ---------- La comanda viva del hero ---------- */
+  var MENU = [
+    {id:"ipa",  n:"IPA",           d:"pinta",     p:6500},
+    {id:"honey",n:"Honey",         d:"pinta",     p:6000},
+    {id:"fer",  n:"Fernet con cola",d:"vaso",     p:7500},
+    {id:"pic",  n:"Picada x2",     d:"para compartir", p:18000},
+    {id:"pap",  n:"Papas cheddar", d:"porción",   p:9500},
+    {id:"agua", n:"Agua",          d:"500 ml",    p:2500}
+  ];
+  var qty = {ipa:2, pic:1};
+  var fmt = function(n){ return "$ " + n.toLocaleString("es-AR"); };
+  var carta = document.getElementById("carta"), list = document.getElementById("tItems");
+  var totalEls = [document.getElementById("tTotal"), document.getElementById("figTotal")];
+  var lastAdded = null;
+
+  MENU.forEach(function(it){
+    var btn = document.createElement("button");
+    btn.type = "button"; btn.className = "beer";
+    btn.setAttribute("aria-label", "Agregar " + it.n + ", " + fmt(it.p));
+    btn.innerHTML = "<b>" + it.n + "</b><span>" + fmt(it.p) + " · " + it.d + "</span>";
+    btn.addEventListener("click", function(){
+      qty[it.id] = (qty[it.id] || 0) + 1; lastAdded = it.id; render();
+      btn.classList.remove("pop"); void btn.offsetWidth; btn.classList.add("pop");
+    });
+    carta.appendChild(btn);
+  });
+
+  function render(){
+    var total = 0, html = "";
+    MENU.forEach(function(it){
+      var q = qty[it.id] || 0; if(!q) return;
+      var line = q * it.p; total += line;
+      html += '<li' + (lastAdded === it.id ? ' class="in"' : '') + '><button type="button" data-id="' + it.id + '" aria-label="Quitar uno de ' + it.n + '"><span>' + q + ' x ' + it.n + '</span><span>' + line.toLocaleString("es-AR") + '</span></button></li>';
+    });
+    list.innerHTML = html || '<li class="t-empty">Sin pedidos todavía</li>';
+    totalEls.forEach(function(el){ el.textContent = fmt(total); });
+    lastAdded = null;
+  }
+  list.addEventListener("click", function(e){
+    var b = e.target.closest("button[data-id]"); if(!b) return;
+    var id = b.getAttribute("data-id"); qty[id] = Math.max(0, (qty[id] || 0) - 1); render();
+  });
+  render();
+
+  /* ---------- Entradas al hacer scroll ---------- */
+  var els = document.querySelectorAll(".rv");
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function(ents){
+      ents.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); } });
+    }, {threshold:.12, rootMargin:"0px 0px -6% 0px"});
+    els.forEach(function(el){ io.observe(el); });
+  } else {
+    els.forEach(function(el){ el.classList.add("in"); });
   }
 })();
 </script>
-
 </body>
 </html>
