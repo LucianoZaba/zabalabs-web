@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZabaLABS · Sistema de gestión para bares</title>
+<meta name="description" content="Sistema web para bares: mesas, comandas, cierre de caja y tickets. Instalado en 24 horas, con backups diarios y soporte.">
+<meta property="og:title" content="ZabaLABS · Sistema de gestión para bares">
+<meta property="og:description" content="Mesas, comandas, cierre de caja y tickets en un solo lugar. Instalado en 24 horas.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zabalabs.tech">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23f0b429'/><text x='50' y='70' font-size='62' font-family='system-ui' font-weight='700' text-anchor='middle' fill='%2314130f'>Z</text></svg>">
+<style>
+/* ------------------------------------------------------------------
+   CONFIGURACION RAPIDA - editar solo estas dos lineas
+   WHATSAPP: numero con codigo de pais, sin +, sin espacios ni guiones.
+             Ejemplo Argentina: 5491123456789
+   PAGO:     link de pago de MercadoPago. Si lo dejas vacio, el boton
+             de pago no aparece y queda solo WhatsApp.
+------------------------------------------------------------------- */
+:root{
+  --wa: 5491126326367;
+  /* El link de pago se manda por WhatsApp despues de la charla, no se publica. */
+  --pago: "";
+}
+/* ------------------------------------------------------------------ */
+
+:root{
+  --bg:#0f1115;
+  --bg2:#14171d;
+  --card:#191d24;
+  --line:#272c35;
+  --text:#e8eaef;
+  --muted:#9aa3b2;
+  --gold:#f0b429;
+  --gold2:#ffcf5c;
+  --green:#25d366;
+  --max:1080px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 22px}
+a{color:inherit;text-decoration:none}
+h1,h2,h3{line-height:1.15;letter-spacing:-.02em;font-weight:700}
+.gold{color:var(--gold)}
+
+/* nav */
+header{
+  position:sticky;top:0;z-index:50;
+  background:rgba(15,17,21,.85);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+}
+nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.03em;font-size:1.1rem}
+.logo-mark{
+  width:30px;height:30px;border-radius:9px;background:linear-gradient(140deg,var(--gold),#c98f00);
+  display:grid;place-items:center;color:#14130f;font-weight:900;font-size:1rem;
+}
+nav .links{display:flex;gap:26px;font-size:.92rem;color:var(--muted)}
+nav .links a:hover{color:var(--text)}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  padding:13px 22px;border-radius:10px;font-weight:600;font-size:.95rem;
+  border:1px solid transparent;cursor:pointer;transition:.15s;
+  white-space:nowrap;
+}
+.btn-gold{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#14130f}
+.btn-gold:hover{filter:brightness(1.07)}
+.btn-wa{background:var(--green);color:#0b2b16}
+.btn-wa:hover{filter:brightness(1.07)}
+.btn-ghost{border-color:var(--line);color:var(--text)}
+.btn-ghost:hover{border-color:#3d4552;background:#1a1e26}
+nav .btn{padding:9px 16px;font-size:.88rem}
+
+/* hero */
+.hero{padding:84px 0 70px;position:relative;overflow:hidden}
+.hero::before{
+  content:"";position:absolute;top:-260px;left:50%;transform:translateX(-50%);
+  width:900px;height:600px;pointer-events:none;
+  background:radial-gradient(circle,rgba(240,180,41,.13),transparent 62%);
+}
+.hero .wrap{position:relative}
+.eyebrow{
+  display:inline-block;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold);border:1px solid rgba(240,180,41,.3);
+  padding:6px 13px;border-radius:99px;margin-bottom:24px;
+}
+.hero h1{font-size:clamp(2.1rem,5.4vw,3.9rem);max-width:17ch;margin-bottom:22px}
+.hero p.lead{font-size:clamp(1rem,2vw,1.18rem);color:var(--muted);max-width:56ch;margin-bottom:34px}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:26px}
+.micro{font-size:.85rem;color:var(--muted)}
+
+/* strip */
+.strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg2)}
+.strip .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.strip .cell{padding:26px 18px;text-align:center;border-right:1px solid var(--line)}
+.strip .cell:last-child{border-right:none}
+.strip b{display:block;font-size:1.35rem;letter-spacing:-.02em}
+.strip span{font-size:.82rem;color:var(--muted)}
+
+/* sections */
+section{padding:80px 0}
+.sec-head{max-width:640px;margin-bottom:44px}
+.sec-head h2{font-size:clamp(1.6rem,3.4vw,2.3rem);margin-bottom:14px}
+.sec-head p{color:var(--muted)}
+
+/* features */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:26px 24px;transition:.18s;
+}
+.card:hover{border-color:#3a4250;transform:translateY(-2px)}
+.card .ico{
+  width:38px;height:38px;border-radius:10px;display:grid;place-items:center;
+  background:rgba(240,180,41,.1);color:var(--gold);margin-bottom:16px;
+}
+.card h3{font-size:1.02rem;margin-bottom:8px}
+.card p{font-size:.9rem;color:var(--muted)}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;counter-reset:s}
+.step{
+  background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:26px 24px;
+  position:relative;
+}
+.step::before{
+  counter-increment:s;content:counter(s);
+  position:absolute;top:-14px;left:24px;
+  width:30px;height:30px;border-radius:8px;
+  background:var(--gold);color:#14130f;font-weight:800;
+  display:grid;place-items:center;font-size:.9rem;
+}
+.step h3{font-size:1rem;margin:10px 0 8px}
+.step p{font-size:.9rem;color:var(--muted)}
+
+/* price */
+.price-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:stretch}
+.price{
+  background:linear-gradient(170deg,#1c2028,#15181e);
+  border:1px solid rgba(240,180,41,.35);border-radius:18px;padding:38px 34px;
+  position:relative;
+}
+.price .tag{
+  position:absolute;top:-12px;left:34px;background:var(--gold);color:#14130f;
+  font-size:.72rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+  padding:5px 11px;border-radius:99px;
+}
+.price .amount{font-size:2.6rem;font-weight:800;letter-spacing:-.03em;line-height:1}
+.price .amount small{font-size:1rem;font-weight:500;color:var(--muted)}
+.price ul{list-style:none;margin:26px 0 28px;display:grid;gap:11px}
+.price li{display:flex;gap:10px;font-size:.93rem;color:#cdd3dd}
+.price li::before{content:"✓";color:var(--gold);font-weight:800}
+.price .btn{width:100%}
+.price .note{text-align:center;font-size:.8rem;color:var(--muted);margin-top:14px}
+.aside{
+  background:var(--bg2);border:1px solid var(--line);border-radius:18px;
+  padding:32px 30px;display:flex;flex-direction:column;justify-content:center;gap:18px;
+}
+.aside h3{font-size:1.05rem}
+.aside p{font-size:.9rem;color:var(--muted)}
+.aside .row{display:flex;gap:11px;font-size:.88rem;color:#cdd3dd}
+.aside .row b{color:var(--gold);flex:none}
+
+/* faq */
+.faq{display:grid;gap:12px;max-width:820px}
+details{
+  background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:18px 22px;
+}
+details[open]{border-color:#39414e}
+summary{cursor:pointer;font-weight:600;font-size:.95rem;list-style:none;display:flex;justify-content:space-between;gap:16px;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--gold);font-size:1.2rem;font-weight:700;flex:none;transition:.2s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{margin-top:12px;font-size:.9rem;color:var(--muted)}
+
+/* final cta */
+.final{
+  background:linear-gradient(140deg,rgba(240,180,41,.12),rgba(240,180,41,.02));
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  padding:76px 0;text-align:center;
+}
+.final h2{font-size:clamp(1.6rem,3.6vw,2.4rem);margin-bottom:16px}
+.final p{color:var(--muted);max-width:52ch;margin:0 auto 30px}
+
+footer{padding:36px 0;font-size:.84rem;color:var(--muted)}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
+
+/* responsive */
+@media (max-width:860px){
+  .grid,.steps{grid-template-columns:1fr 1fr}
+  .price-wrap{grid-template-columns:1fr}
+  nav .links{display:none}
+}
+@media (max-width:600px){
+  .grid,.steps{grid-template-columns:1fr}
+  .strip .wrap{grid-template-columns:1fr 1fr}
+  .strip .cell:nth-child(2){border-right:none}
+  .strip .cell:nth-child(1),.strip .cell:nth-child(2){border-bottom:1px solid var(--line)}
+  .hero{padding:60px 0 50px}
+  section{padding:60px 0}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <nav>
+      <a href="#" class="logo"><span class="logo-mark">Z</span> ZabaLABS</a>
+      <div class="links">
+        <a href="#funciones">Funciones</a>
+        <a href="#como">Cómo funciona</a>
+        <a href="#precio">Precio</a>
+        <a href="#preguntas">Preguntas</a>
+      </div>
+      <a class="btn btn-gold wa-link" href="#">Quiero mi sistema</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Gestión de bares</span>
+    <h1>Tu bar, ordenado.<br><span class="gold">Una sola pantalla.</span></h1>
+    <p class="lead">
+      Mesas, comandas, cierre de caja y tickets en 80&nbsp;mm. Funciona en la compu del local,
+      con backup diario y sin depender de internet para cobrar.
+    </p>
+    <div class="cta-row">
+      <a class="btn btn-gold wa-link" href="#">Quiero que me lo instalen</a>
+      <a class="btn btn-ghost" href="#funciones">Ver qué incluye</a>
+    </div>
+    <p class="micro">Instalación en menos de 24 horas · Sin contratos largos · Soporte en español</p>
+  </div>
+</div>
+
+<div class="strip">
+  <div class="wrap">
+    <div class="cell"><b>24 h</b><span>puesta en marcha</span></div>
+    <div class="cell"><b>Diario</b><span>backup automático</span></div>
+    <div class="cell"><b>80 mm</b><span>tickets de comanda</span></div>
+    <div class="cell"><b>Sin límite</b><span>de mesas</span></div>
+  </div>
+</div>
+
+<section id="funciones">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Lo que necesita un bar, sin adornos</h2>
+      <p>Cada función está pensada para el turno real: gente esperando, caja abierta y nadie con tiempo de leer un manual.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+        <h3>Mesas y comandas</h3>
+        <p>Mapa de mesas, apertura, agregados y cierre por mesa. Se ve de un vistazo qué está ocupado y qué falta cobrar.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h9"/></svg></div>
+        <h3>Carta editable</h3>
+        <p>Precios, rubros y promociones que cambiás desde el panel. Sin tocar archivos ni llamar a nadie.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></div>
+        <h3>Cierre por turno</h3>
+        <p>Total por turno, medios de pago y diferencias de caja. Queda registrado quién cerró y cuándo.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8h5M9.5 12h5"/></svg></div>
+        <h3>Tickets de 80 mm</h3>
+        <p>Comanda para barra y ticket para el cliente, con el nombre y el logo del local.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5.5" rx="6.5" ry="2.5"/><path d="M5.5 5.5v6c0 1.4 2.9 2.5 6.5 2.5s6.5-1.1 6.5-2.5v-6"/><path d="M5.5 11.5v6c0 1.4 2.9 2.5 6.5 2.5s6.5-1.1 6.5-2.5v-6"/></svg></div>
+        <h3>Barriles y stock</h3>
+        <p>Control de barriles, litros servidos y rendimiento por barril, para saber dónde se pierde plata.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 20h18"/><path d="M6 20v-6M11 20V8M16 20v-9M21 20V5"/></svg></div>
+        <h3>Reportes</h3>
+        <p>Ventas por día, producto más vendido y evolución del turno, sin planillas de Excel armadas a mano.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="como" style="background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Se instala una vez. Después es entrar y usar.</h2>
+      <p>No tenés que configurar servidores, ni comprar nada raro. Nos ocupamos nosotros.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <h3>Hablás con nosotros</h3>
+        <p>Nos contás cómo trabaja el local: cuántas mesas, quién cobra, qué se imprime. Sin formularios eternos.</p>
+      </div>
+      <div class="step">
+        <h3>Te lo dejamos andando</h3>
+        <p>Cargamos la carta con tus datos y te mandamos un link de activación. Ahí elegís tu contraseña: no la sabemos ni nosotros.</p>
+      </div>
+      <div class="step">
+        <h3>Empezás a cobrar</h3>
+        <p>Lo abrís desde la compu o el celular del local. Nosotros nos quedamos con el backup y las actualizaciones.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="precio">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Un precio, todo incluido</h2>
+      <p>14 días de prueba gratis, sin tarjeta. Si te sirve, seguís por mes; si no, te llevás tus datos.</p>
+    </div>
+    <div class="price-wrap">
+      <div class="price">
+        <span class="tag">Lanzamiento</span>
+        <div class="amount">$49.000 <small>/ mes</small></div>
+        <p style="color:var(--muted);font-size:.9rem;margin-top:10px">Por local. Sin costo de alta. Los primeros 14 días son gratis.</p>
+        <ul>
+          <li>Sistema completo, sin límite de mesas ni usuarios</li>
+          <li>Instalación y carga inicial a cargo nuestro</li>
+          <li>Hosting incluido, no necesitás servidor propio</li>
+          <li>Backup automático todos los días</li>
+          <li>Actualizaciones y correcciones incluidas</li>
+          <li>Soporte por WhatsApp en horario comercial</li>
+          <li>Tu logo y el nombre del local en los tickets</li>
+        </ul>
+        <a class="btn btn-gold wa-link" href="#">Probar 14 días gratis</a>
+        <p class="note">Sin tarjeta para empezar. Después, facturación mensual sin permanencia mínima.</p>
+      </div>
+      <div class="aside">
+        <h3>¿Para quién es?</h3>
+        <p>Bares, cervecerías y pubs con una caja y varias mesas, que hoy anotan en papel o en una planilla y pierden el control del turno.</p>
+        <div class="row"><b>—</b><span>Si tenés varias sucursales, cada local va con su propia instancia.</span></div>
+        <div class="row"><b>—</b><span>Si querés usar tu propio dominio, también se puede.</span></div>
+        <div class="row"><b>—</b><span>Tus datos son tuyos: te los entregamos si algún día te vas.</span></div>
+        <a class="btn btn-ghost wa-link" href="#">Hacer una consulta</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="preguntas">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Preguntas frecuentes</h2>
+      <p>Las dudas que aparecen siempre antes de decidir.</p>
+    </div>
+    <div class="faq">
+      <details>
+        <summary>¿Qué pasa si se corta internet?</summary>
+        <p>El sistema corre en el servidor con su propia base de datos, así que el local sigue operando. Lo que necesita conexión es abrir la página desde otro lado; en la compu del bar se puede dejar abierta.</p>
+      </details>
+      <details>
+        <summary>¿Quién crea la contraseña?</summary>
+        <p>Vos. Al instalarlo te mandamos un link de activación de un solo uso y ahí elegís tu contraseña de administrador. Nosotros no la vemos ni la guardamos, y si la olvidás te generamos otro link.</p>
+      </details>
+      <details>
+        <summary>¿Dónde quedan mis datos?</summary>
+        <p>En un servidor propio, separado del resto de los clientes, con acceso restringido. Se hace un backup automático todos los días y podés pedir una copia cuando quieras.</p>
+      </details>
+      <details>
+        <summary>¿Necesito comprar una computadora especial?</summary>
+        <p>No. Funciona en cualquier compu con navegador, y también desde el celular o la tablet del local.</p>
+      </details>
+      <details>
+        <summary>¿Puedo usar mi propio dominio?</summary>
+        <p>Sí. Si ya tenés un dominio, lo apuntamos y los clientes entran por ahí. Se cotiza aparte.</p>
+      </details>
+      <details>
+        <summary>¿Puedo probarlo antes de pagar?</summary>
+        <p>Sí. Te damos 14 días con el sistema andando y tu carta cargada. Si al terminar no seguís, no se borra nada: podés descargar todo lo que cargaste en Excel y el sistema queda en modo consulta.</p>
+      </details>
+      <details>
+        <summary>¿Cómo cancelo?</summary>
+        <p>Avisás y se da de baja el servicio al cierre del mes. Antes te entregamos una copia de tus datos.</p>
+      </details>
+      <details>
+        <summary>¿Sirve para un bar con varias cajas?</summary>
+        <p>Está pensado para una caja por local, que es el caso de la mayoría de los bares chicos. Si necesitás varias, lo hablamos.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<div class="final">
+  <div class="wrap">
+    <h2>Probalo con los datos de tu bar</h2>
+    <p>Contanos cuántas mesas tenés y cómo cobrás hoy. Te mostramos el sistema funcionando con tu carta.</p>
+    <a class="btn btn-wa wa-link" href="#">Escribir por WhatsApp</a>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>ZabaLABS · Sistemas para gastronomía</span>
+    <span>zabalabs.tech</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var tel = String(getComputedStyle(document.documentElement).getPropertyValue('--wa')).trim() || "5491100000000";
+  var msg = encodeURIComponent("Hola, vi la web de ZabaLABS y quiero información sobre el sistema para mi bar.");
+  var url = "https://wa.me/" + tel + "?text=" + msg;
+  document.querySelectorAll(".wa-link").forEach(function(a){ a.href = url; a.target = "_blank"; a.rel = "noopener"; });
+
+  var pago = String(getComputedStyle(document.documentElement).getPropertyValue('--pago')).trim().replace(/^["']+|["']+$/g, "");
+  if (pago && pago.indexOf("http") === 0) {
+    var b = document.createElement("a");
+    b.className = "btn btn-ghost";
+    b.href = pago;
+    b.target = "_blank";
+    b.rel = "noopener";
+    b.textContent = "Pagar con MercadoPago";
+    b.style.marginTop = "10px";
+    b.style.display = "flex";
+    document.querySelector(".price .btn-gold").insertAdjacentElement("afterend", b);
+  }
+})();
+</script>
+
+</body>
+</html>
